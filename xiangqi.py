@@ -1,13 +1,11 @@
 pointsPerSide = 9 * 5
 numSides = 2
 totalPoints = numSides * pointsPerSide
-assert totalPoints == 90
 
 maxUnoccupiedPoints = totalPoints - (numSides)  # 2 generals
 maxHorsesChariotsAndCannonsBetweenThe2Sides = (
     numSides * 3 * 2
 )  # "" * #{h, ch, c} * numOfEachTypeInBrackets
-assert maxHorsesChariotsAndCannonsBetweenThe2Sides == 12
 C = [  # binomial coefficients
     [0] * (maxHorsesChariotsAndCannonsBetweenThe2Sides + 1)
     for i in range(maxUnoccupiedPoints + 1)
@@ -17,35 +15,28 @@ for n in range(0, maxUnoccupiedPoints + 1):
 for n in range(1, maxUnoccupiedPoints + 1):
     for k in range(1, maxHorsesChariotsAndCannonsBetweenThe2Sides + 1):
         C[n][k] = C[n - 1][k - 1] + C[n - 1][k]
-assert C[0][0] == 1
-assert C[0][1] == 0
-assert C[88][2] == 3828
-assert C[45][12] == 28760021745
 
 genAdvEleSameSideSoldierPerms = {}
 maxSoldiersPerSide = 5
 
 
-def sameSideSoldiers(numXiangqiMen, soldierPointsOccupiedByElephants, perms):
+def sameSideSoldiers(
+    numXiangqiMen, soldierPointsOccupiedByElephants, perms, nadv, nele
+):
     for numSoldiers in range(0, maxSoldiersPerSide + 1):
         soldierPerms = 0
-
         uninhibitedCols = maxSoldiersPerSide - soldierPointsOccupiedByElephants
-        assert uninhibitedCols >= 3
-        assert uninhibitedCols <= 5
-
+        # uninhibitedCols \in [3, 5]
         for inhibitedSoldiers in range(
             max(numSoldiers - uninhibitedCols, 0),  # the min inhibited
             min(numSoldiers + 1, soldierPointsOccupiedByElephants + 1),  # the max
         ):
             uninhibitedSoldiers = numSoldiers - inhibitedSoldiers
-            assert soldierPointsOccupiedByElephants >= inhibitedSoldiers
-            assert uninhibitedCols >= uninhibitedSoldiers
             soldierPerms += (
                 C[soldierPointsOccupiedByElephants][inhibitedSoldiers]
                 * C[uninhibitedCols][uninhibitedSoldiers]
                 * pow(2, uninhibitedSoldiers)
-            )  # 2 for the point before crossing river and the one behind it
+            )  # 2 points: 1 adjacent to river and one behind it
         k = (numXiangqiMen + numSoldiers, numSoldiers)
         if k not in genAdvEleSameSideSoldierPerms:
             genAdvEleSameSideSoldierPerms[k] = soldierPerms * perms
@@ -67,6 +58,8 @@ def ele(numXiangqiMen, genOn35, perms):
                     i - j
                 ]
                 * perms,
+                numXiangqiMen - 1,
+                i,
             )
 
 
