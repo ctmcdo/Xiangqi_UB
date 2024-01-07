@@ -16,7 +16,6 @@ for n in range(1, binomN + 1):
         binoms[n][k] = binoms[n - 1][k - 1] + binoms[n - 1][k]
 
 summaries = {}
-
 maxSoldiersPerSide = 5
 
 
@@ -35,8 +34,7 @@ def sameSideSoldiers(numXiangqiMen, soldierPointsOccupiedByEles, perms):
                 binoms[soldierPointsOccupiedByEles][squeezedSoldiers]
                 * binoms[uninhibCols][uninhibSoldiers]
                 * pow(2, uninhibSoldiers)
-            )  # 2 for the square before crossing river and the one behind it
-
+            )  # 2 for the point before crossing river and the one behind it
         k = (numXiangqiMen + 1 + numSoldiers, numSoldiers)  # 1 for this side's gen
         if k not in summaries:
             summaries[k] = soldierPerms * perms
@@ -78,9 +76,8 @@ adv(False, True, 1)  # 3_5
 adv(True, False, 5)  # 4 corners + 1 centre
 
 # n distinct balls (points) into k distinct bins (piece type & colour) where
-# each bin has capacity 2 (there are at most 2 horses, chariots and cannons).
+# each bin has capacity 2 (there are at most 2 horses, chariots and cannons of each colour).
 # n! Coefficient[(1 + x + x^2/2)^k, x^n] for k = 6, 0 <= n <= 12
-# k = 6 for h, ch, c, H, Ch, C, or maxHorsesChariotsAndCannonsOverBothSides // 2
 exps = [
     1,
     6,
@@ -124,12 +121,12 @@ def countSideCombo(s0, s1):
 upperbound = 0
 summaryKeys = list(summaries.keys())
 for i in range(len(summaries)):
-    upperbound += numSides * countSideCombo(
-        summaryKeys[i], summaryKeys[i]
-    )  # sideToMove
+    upperbound += countSideCombo(summaryKeys[i], summaryKeys[i])  # sideToMove
     for j in range(i + 1, len(summaries)):
-        upperbound += (
-            numSides * numSides * countSideCombo(summaryKeys[i], summaryKeys[j])
-        )  # sideToMove * symmetry
-print(upperbound)
+        upperbound += numSides * countSideCombo(
+            summaryKeys[i], summaryKeys[j]
+        )  # symmetry
+print(upperbound)  # diagrams
+# 7583767311308936928441671793917387439659
+print(upperbound * 2)  # sideToMove -> positions
 # 15167534622617873856883343587834774879318
