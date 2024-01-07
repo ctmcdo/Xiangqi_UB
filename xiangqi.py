@@ -130,3 +130,4 @@ for i in range(len(summaries)):
             numSides * numSides * countSideCombo(summaryKeys[i], summaryKeys[j])
         )  # sideToMove * symmetry
 print(upperbound)
+# 15167534622617873856883343587834774879318
