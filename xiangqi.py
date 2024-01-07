@@ -1,6 +1,6 @@
-totalPoints = 9 * 10
+pointsPerSide = 9 * 5
 numSides = 2
-pointsPerSide = totalPoints // 2
+totalPoints = numSides * pointsPerSide
 
 binomN = totalPoints - (numSides)  # 2 generals
 maxHorsesChariotsAndCannonsOverBothSides = (
@@ -77,8 +77,10 @@ adv(False, False, 3)  # 9 - 5 - 1 = 3
 adv(False, True, 1)  # 3_5
 adv(True, False, 5)  # 4 corners + 1 centre
 
+# n distinct balls (points) into k distinct bins (piece type & colour) where
+# each bin has capacity 2 (there are at most 2 horses, chariots and cannons).
 # n! Coefficient[(1 + x + x^2/2)^k, x^n] for k = 6, 0 <= n <= 12
-# k = 6 for h, ch, c, H, CH, C, or maxHorsesChariotsAndCannonsOverBothSides // 2
+# k = 6 for h, ch, c, H, Ch, C, or maxHorsesChariotsAndCannonsOverBothSides // 2
 exps = [
     1,
     6,
@@ -105,18 +107,18 @@ for remPoints in range(minFreePoints, binomN + 1):
         horseChariotAndCannonPerms[remPoints] += binoms[remPoints][j] * exps[j]
 
 
-def countSideCombo(k0, k1):
+def countSideCombo(s0, s1):
     summation = 0
-    for freeSoldiers0 in range(maxSoldiersPerSide - k0[1] + 1):  # rem soldiers
-        for freeSoldiers1 in range(maxSoldiersPerSide - k1[1] + 1):
+    for freeSoldiers0 in range(maxSoldiersPerSide - s0[1] + 1):  # rem soldiers
+        for freeSoldiers1 in range(maxSoldiersPerSide - s1[1] + 1):
             summation += (
-                binoms[pointsPerSide - k1[0]][freeSoldiers0]
-                * binoms[pointsPerSide - k0[0]][freeSoldiers1]
+                binoms[pointsPerSide - s1[0]][freeSoldiers0]
+                * binoms[pointsPerSide - s0[0]][freeSoldiers1]
                 * horseChariotAndCannonPerms[
-                    totalPoints - k0[0] - k1[0] - freeSoldiers0 - freeSoldiers1
+                    totalPoints - s0[0] - s1[0] - freeSoldiers0 - freeSoldiers1
                 ]
             )
-    return summation * summaries[k0] * summaries[k1]
+    return summation * summaries[s0] * summaries[s1]
 
 
 upperbound = 0
