@@ -1,10 +1,11 @@
 totalPoints = 9 * 10
 numSides = 2
+pointsPerSide = totalPoints // 2
 
 binomN = totalPoints - (numSides)  # 2 generals
 maxHorsesChariotsAndCannonsOverBothSides = (
-    2 * 3 * 2
-)  # numSides * #{h, ch, c} * numOfEachType
+    numSides * 3 * 2
+)  # "" * #{h, ch, c} * numOfEachType
 binoms = [
     [0] * (maxHorsesChariotsAndCannonsOverBothSides + 1) for i in range(binomN + 1)
 ]
@@ -94,9 +95,9 @@ exps = [
     7484400,
 ]
 
-minFreePoints = totalPoints - 2 * (
+minFreePoints = totalPoints - numSides * (
     1 + 2 * 2 + maxSoldiersPerSide
-)  # numSides * (gen + 2 * #{adv, ele} + "")
+)  # "" * (gen + #{adv, ele} * numOfEachType + "")
 horseChariotAndCannonPerms = {}
 for remPoints in range(minFreePoints, binomN + 1):
     horseChariotAndCannonPerms[remPoints] = 0
@@ -105,14 +106,15 @@ for remPoints in range(minFreePoints, binomN + 1):
 
 
 def countSideCombo(k0, k1):
-    halfb = totalPoints // 2
     summation = 0
-    for i in range(maxSoldiersPerSide - k0[1]):  # rem soldiers
-        for j in range(maxSoldiersPerSide - k1[1]):
+    for freeSoldiers0 in range(maxSoldiersPerSide - k0[1] + 1):  # rem soldiers
+        for freeSoldiers1 in range(maxSoldiersPerSide - k1[1] + 1):
             summation += (
-                binoms[halfb - k1[0]][i]
-                * binoms[halfb - k0[0]][j]
-                * horseChariotAndCannonPerms[totalPoints - k0[0] - k1[0] - i - j]
+                binoms[pointsPerSide - k1[0]][freeSoldiers0]
+                * binoms[pointsPerSide - k0[0]][freeSoldiers1]
+                * horseChariotAndCannonPerms[
+                    totalPoints - k0[0] - k1[0] - freeSoldiers0 - freeSoldiers1
+                ]
             )
     return summation * summaries[k0] * summaries[k1]
 
@@ -120,7 +122,11 @@ def countSideCombo(k0, k1):
 upperbound = 0
 summaryKeys = list(summaries.keys())
 for i in range(len(summaries)):
-    upperbound += 2 * countSideCombo(summaryKeys[i], summaryKeys[i])
+    upperbound += numSides * countSideCombo(
+        summaryKeys[i], summaryKeys[i]
+    )  # sideToMove
     for j in range(i + 1, len(summaries)):
-        upperbound += 2 * 2 * countSideCombo(summaryKeys[i], summaryKeys[j])
+        upperbound += (
+            numSides * numSides * countSideCombo(summaryKeys[i], summaryKeys[j])
+        )  # sideToMove * symmetry
 print(upperbound)
