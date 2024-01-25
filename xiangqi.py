@@ -20,9 +20,7 @@ genAdvEleSameSideSoldierPerms = {}
 maxSoldiersPerSide = 5
 
 
-def sameSideSoldiers(
-    numXiangqiMen, soldierPointsOccupiedByElephants, perms, nadv, nele
-):
+def sameSideSoldiers(numXiangqiMen, soldierPointsOccupiedByElephants, perms):
     for numSoldiers in range(0, maxSoldiersPerSide + 1):
         soldierPerms = 0
         uninhibitedCols = maxSoldiersPerSide - soldierPointsOccupiedByElephants
@@ -58,8 +56,6 @@ def ele(numXiangqiMen, genOn35, perms):
                     i - j
                 ]
                 * perms,
-                numXiangqiMen - 1,
-                i,
             )
 
 
@@ -143,7 +139,5 @@ for i in range(len(genAdvEleSameSideSoldierPerms)):
     diagram_upperbound += sumSides(sideKeys[i], sideKeys[i])
     for j in range(i + 1, len(genAdvEleSameSideSoldierPerms)):
         diagram_upperbound += numSides * sumSides(sideKeys[i], sideKeys[j])  # symmetry
-print(f"Diagrams upperbound: {diagram_upperbound}")  # diagrams
-# 7583767311308936928441671793917387439659
-print(f"Positions upperbound: {2 * diagram_upperbound}")  # sideToMove -> positions
+print(2 * diagram_upperbound)  # 2 for side-to-move
 # 15167534622617873856883343587834774879318
